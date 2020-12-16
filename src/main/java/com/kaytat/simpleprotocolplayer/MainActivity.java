@@ -70,6 +70,7 @@ public class MainActivity extends Activity implements OnClickListener {
     boolean mStereo;
     int mBufferMs;
     boolean mRetry;
+    boolean mDucking;
 
     Button mPlayButton;
     Button mStopButton;
@@ -145,6 +146,7 @@ public class MainActivity extends Activity implements OnClickListener {
     static final String STEREO_PREF = "STEREO";
     static final String BUFFER_MS_PREF = "BUFFER_MS";
     static final String RETRY_PREF = "RETRY";
+    static final String RETRY_DUCK = "DUCK";
 
     ArrayList<String> getListFromPrefs(
             SharedPreferences prefs,
@@ -237,6 +239,7 @@ public class MainActivity extends Activity implements OnClickListener {
         prefsEditor.putInt(RATE_PREF, mSampleRate);
         prefsEditor.putInt(BUFFER_MS_PREF, mBufferMs);
         prefsEditor.putBoolean(RETRY_PREF, mRetry);
+        prefsEditor.putBoolean(RETRY_PREF, mDucking);
         if (android.os.Build.VERSION.SDK_INT >= 9) {
             prefsEditor.apply();
         } else {
@@ -371,6 +374,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
         mRetry = myPrefs.getBoolean(RETRY_PREF, MusicService.DEFAULT_RETRY);
         Log.d(TAG, "mRetry:" + mRetry);
+
+        mDucking = myPrefs.getBoolean(RETRY_DUCK, false);
+        Log.d(TAG, "mDucking:" + mDucking);
     }
 
     @Override
@@ -473,6 +479,11 @@ public class MainActivity extends Activity implements OnClickListener {
             mRetry = ((CheckBox) findViewById(R.id.checkBoxRetry)).isChecked();
             Log.d(TAG, "retry:" + mRetry);
             i.putExtra(MusicService.DATA_RETRY, mRetry);
+
+            // Get the ducking checkbox
+            mDucking = ((CheckBox) findViewById(R.id.checkBoxDucking)).isChecked();
+            Log.d(TAG, "ducking:" + mDucking);
+            i.putExtra(MusicService.DATA_DUCKING, mDucking);
 
             // Extract the retry state
             // Save current settings

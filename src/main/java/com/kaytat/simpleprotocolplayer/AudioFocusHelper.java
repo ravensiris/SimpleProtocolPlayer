@@ -34,6 +34,7 @@ public class AudioFocusHelper
         implements AudioManager.OnAudioFocusChangeListener {
     AudioManager mAM;
     MusicFocusable mFocusable;
+    boolean isDucking;
 
     public AudioFocusHelper(Context ctx, MusicFocusable focusable) {
         mAM = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
@@ -43,10 +44,10 @@ public class AudioFocusHelper
     /**
      * Requests audio focus. Returns whether request was successful or not.
      */
-    public boolean requestFocus() {
+    public boolean requestFocus(boolean isDucking) {
         return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
                 mAM.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-                        AudioManager.AUDIOFOCUS_GAIN);
+                        isDucking ? AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK : AudioManager.AUDIOFOCUS_GAIN);
     }
 
     /**

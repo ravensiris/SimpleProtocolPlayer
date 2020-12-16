@@ -46,6 +46,7 @@ public class MusicService extends Service implements MusicFocusable {
     static final boolean DEFAULT_STEREO = true;
     static final int DEFAULT_BUFFER_MS = 50;
     static final boolean DEFAULT_RETRY = false;
+    static final boolean DEFAULT_DUCKING = false;
 
     // These are the Intent actions that we are prepared to handle. Notice
     // that the fact these constants exist in our class is a mere
@@ -63,6 +64,7 @@ public class MusicService extends Service implements MusicFocusable {
     public static final String DATA_STEREO = "stereo";
     public static final String DATA_BUFFER_MS = "buffer_ms";
     public static final String DATA_RETRY = "retry";
+    public static final String DATA_DUCKING = "ducking";
 
     // The volume we set the media player to when we lose audio focus, but
     // are allowed to reduce the volume instead of stopping playback.
@@ -150,7 +152,7 @@ public class MusicService extends Service implements MusicFocusable {
 
     void processPlayRequest(Intent i) {
         if (mState == State.Stopped) {
-            tryToGetAudioFocus();
+            tryToGetAudioFocus(i.getBooleanExtra(DATA_DUCKING, DEFAULT_DUCKING));
         } else {
             stopWorkers();
         }
@@ -204,9 +206,9 @@ public class MusicService extends Service implements MusicFocusable {
         workers.clear();
     }
 
-    void tryToGetAudioFocus() {
+    void tryToGetAudioFocus(boolean isDucking) {
         if (mAudioFocus != AudioFocus.Focused && mAudioFocusHelper != null
-                && mAudioFocusHelper.requestFocus()) {
+                && mAudioFocusHelper.requestFocus(isDucking)) {
             mAudioFocus = AudioFocus.Focused;
         }
     }
